@@ -226,5 +226,6 @@ def _load_settings() -> Settings:
     return Settings()
 
 
+
 # Created once, when this module is first imported, and shared everywhere.
 settings: Settings = _load_settings()
