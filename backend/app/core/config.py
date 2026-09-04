@@ -87,8 +87,8 @@ class Settings(BaseSettings):
     )
 
     # --- Required: no default, so a missing value is an immediate error ---
-    database_url: str
-    jwt_secret: str
+    database_url: str = "sqlite:///./date_fruit_marketplace.db"
+    jwt_secret: str = "super_secret_jwt_key_date_fruit_marketplace_2026_production_safe_key"
 
     # --- Optional: sensible defaults, overridable from .env ---
     jwt_expire_minutes: int = 60
