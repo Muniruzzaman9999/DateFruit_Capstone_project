@@ -1,0 +1,75 @@
+# ============================================================================
+#  .gitignore for date-fruit-project
+# ============================================================================
+#  The trained model file is NOT in Git. At 322.6 MiB it exceeds GitHub's hard
+#  100 MiB per-file push limit, so it is distributed by download instead.
+#    model/date_fruit_model.keras   -> IGNORED (download it separately)
+#    model/classes.json             -> tracked (94 bytes, and it is the single
+#                                      source of truth for the class order)
+#  See "A note on the model file and Git" in README.md for the download link.
+#  Also intentionally tracked: README.md, all source code, Alembic migrations,
+#  the test_images/ folder, and both .env.example files (they contain
+#  placeholders, never real secrets).
+# ============================================================================
+
+# --- The trained model -----------------------------------------------------
+# Ignored by filename, not by folder, so model/classes.json stays tracked.
+model/date_fruit_model.keras
+*.keras
+
+# --- Secrets: never commit a real .env -------------------------------------
+# A bare pattern like ".env" matches at every directory level, so this also
+# covers backend/.env and frontend/.env. ".env.example" does NOT match these
+# patterns, so the example files stay tracked.
+.env
+.env.local
+.env.*.local
+
+# --- Python ----------------------------------------------------------------
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.claude/
+claude/
+# --- Node / React ----------------------------------------------------------
+node_modules/
+dist/
+build/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Uploaded listing images -----------------------------------------------
+# Photographs published by users belong to whoever is running the application,
+# not to the repository. The folder itself must still exist in a fresh clone,
+# though, or the first publish would fail - and Git cannot store an empty
+# folder. So the contents are ignored and the .gitkeep placeholder is kept, via
+# the "!" pattern which un-ignores a single file.
+backend/uploads/listings/*
+!backend/uploads/listings/.gitkeep
+
+# --- Editors / IDEs --------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+
+# --- Operating system junk -------------------------------------------------
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# --- Logs & temporary files ------------------------------------------------
+*.log
+tmp/
+temp/
