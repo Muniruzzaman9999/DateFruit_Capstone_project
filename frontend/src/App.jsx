@@ -24,7 +24,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 
-/** Shown while the stored token is being checked against the backend. */
+const defaultBackend = "https://datefruit-capstone-project1.onrender.com";
 function CheckingSession() {
   return (
     <div className="flex justify-center py-16">
