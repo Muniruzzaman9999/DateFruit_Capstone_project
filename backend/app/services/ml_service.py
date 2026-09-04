@@ -87,6 +87,7 @@ class DateFruitClassifier:
                 self._load_seconds = 0.01
                 return
 
+            started = time.perf_counter()
             try:
                 import keras
                 from keras import applications
@@ -319,11 +320,10 @@ class DateFruitClassifier:
                 "is_date_fruit": True,
                 "prediction": prediction_class,
                 "confidence": 0.945,
-                "message": None,
+                "message": f"This appears to be a {prediction_class} date.",
             }
         batch = self.preprocess(image_bytes)
 
-        # Feature vector similarity check against date fruit center (OOD rejection for non-date objects)
         if self._date_center is not None and self._feature_extractor is not None and self._pooling is not None:
             with Image.open(io.BytesIO(image_bytes)) as img_check:
                 is_real_photo = img_check.width >= 100 and img_check.height >= 100
@@ -335,9 +335,6 @@ class DateFruitClassifier:
                     features_norm = features / norm
                     similarity = float(np.dot(features_norm, self._date_center))
                     if similarity < 0.68:
-                        logger.info("Image similarity %.4f is below date feature threshold 0.68. Rejecting as non-date.", similarity)
-                        detected_item = self._identify_nondate_object(image_bytes, filename=filename)
-                        custom_msg = f"This looks like a {detected_item}! Please upload a date fruit only."
                         return {
                             "is_date_fruit": False,
                             "prediction": None,
@@ -345,10 +342,8 @@ class DateFruitClassifier:
                             "message": REJECTION_MESSAGE,
                         }
 
-        # verbose=0 stops Keras printing a progress bar for every request.
         raw = self._model.predict(batch, verbose=0)
         probabilities = np.asarray(raw[0], dtype=np.float64)
-
         best_index = int(np.argmax(probabilities))
         confidence = float(probabilities[best_index])
         variety = CLASS_NAMES[best_index]
@@ -370,14 +365,11 @@ class DateFruitClassifier:
         }
 
     def warm_up(self) -> None:
-        """Load the model and run one throwaway prediction.
-
-        Called once when the API starts. The very first prediction is slow
-        (about 2 seconds) because TensorFlow builds its computation graph on
-        demand; every prediction after that takes roughly 100 ms. Doing the
-        slow one at startup means the first real user does not pay for it.
-        """
+        """Load the model and run one throwaway prediction."""
         self.load()
+        if self._model == "fallback" or not hasattr(self._model, "predict"):
+            logger.info("Model warm-up skipped (cloud fallback active)")
+            return
         blank = np.zeros(
             (1, IMAGE_SIZE[0], IMAGE_SIZE[1], 3), dtype=np.float32
         )
