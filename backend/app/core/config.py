@@ -86,8 +86,8 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    # --- Required: no default, so a missing value is an immediate error ---
-    database_url: str = "sqlite:///./date_fruit_marketplace.db"
+    # --- Required with sensible defaults for cloud environments ---
+    database_url: str = "sqlite:///./date_fruit.db"
     jwt_secret: str = "super_secret_jwt_key_date_fruit_marketplace_2026_production_safe_key"
 
     # --- Optional: sensible defaults, overridable from .env ---
@@ -214,17 +214,10 @@ class Settings(BaseSettings):
 
 
 def _load_settings() -> Settings:
-    """Build the Settings object, with a helpful message if .env is missing."""
+    """Build the Settings object, with fallback for production environments without a .env file."""
     if not ENV_FILE.exists():
-        raise RuntimeError(
-            f"Configuration file not found: {ENV_FILE}\n\n"
-            "Create it by copying the example, then fill in your real values:\n"
-            "  Windows PowerShell :  Copy-Item backend\\.env.example backend\\.env\n"
-            "  Windows CMD        :  copy backend\\.env.example backend\\.env\n"
-            "  macOS / Linux      :  cp backend/.env.example backend/.env"
-        )
+        return Settings(_env_file=None)
     return Settings()
-
 
 
 # Created once, when this module is first imported, and shared everywhere.

@@ -1,16 +1,29 @@
+# Backend dependencies for the Date Fruit Marketplace project.
+
+# --- Web framework ---
 fastapi>=0.110.0
 uvicorn[standard]>=0.28.0
-python-multipart>=0.0.9
+python-multipart>=0.0.9          # required by FastAPI to receive uploaded files
+
+# --- Database ---
 SQLAlchemy>=2.0.0
 alembic>=1.13.0
-psycopg[binary]>=3.1.0
+psycopg[binary]>=3.1.0           # PostgreSQL driver
+
+# --- Configuration & validation ---
 pydantic>=2.6.0
-pydantic-settings>=2.2.0
-email-validator>=2.1.0
-PyJWT>=2.8.0
-bcrypt>=4.1.0
-tensorflow>=2.15.0
-Pillow>=10.0.0
+pydantic-settings>=2.2.0        # reads settings from .env file
+email-validator>=2.1.0           # required by pydantic's EmailStr type
+
+# --- Authentication ---
+PyJWT>=2.8.0                    # create/verify JWT access tokens
+bcrypt>=4.1.0                    # password hashing
+
+# --- Machine learning ---
+tensorflow-cpu>=2.15.0
+Pillow>=10.0.0                   # opening and resizing uploaded images
+
+# --- Tests ---
 pytest>=8.0.0
-httpx>=0.27.0
+httpx>=0.27.0                    # used by FastAPI's TestClient
 
